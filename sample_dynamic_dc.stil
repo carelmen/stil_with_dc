@@ -1,0 +1,574 @@
+/***********************************************
+  DC (DPS) Measurements in patterns
+  TestInsight Webinar 2022-05-31
+************************************************/
+
+
+// Stil header DC Levels need to be included
+STIL 1.0 {
+  Design 2005;
+  DCLevels 2002;
+}
+
+// Pin definitions
+Signals {
+  clk In;    // Digital input
+  d1 In;     // Digital input
+  VDD Supply;  // Power Supply (DPS) pin
+}
+
+
+Spec all_specs {
+  Category all_cats {
+    per1 = '100ns';
+    vdd_low = '1.5V';
+    vdds_low = '2.7V';
+    vdd_hi = '1.8V';
+    vdds_hi = '3.3V';
+    iddmax = '100mA';
+    vih_hi = '3.3V';
+    vil_hl = '0.0V';
+    custom_vdd_low = 'vdd_low + 0.1V' ;
+
+  }
+}
+
+Variables {
+  IntegerConstant T := 320;
+  Integer LP;
+}
+
+
+Environment "Default" {
+  // Define pin configuration here so we don't have punch it in again in SmarTest
+  NameMaps "93kChannel:stil_with_dc" {
+    Signals {
+      clk "10209,Pin 15";
+      d1 "10210,Pin 16";
+      VDD "22901, Pin 12";
+    }
+  }
+
+}
+
+// Set tester-specific level specs
+  Environment {
+  NameMaps "93kExtraLevels" {
+    Signals {
+	clk	"term=off";
+        VDD     "offcurr=act, t_ms = 20";       
+    }
+  }
+
+  // Definition of the DC measurements
+   NameMaps "93kDynamicDC_Events" {
+    AllNames {
+	VF_vdd_3p3V    "signal=VDD, force=voltage, value = 3.3";
+        VF_vdd_low    "signal=VDD, force=voltage, value =LEV:vdd_low";
+        VF_vdd_hi    "signal=VDD, force=voltage, value =LEV:vdd_hi";
+        IM_idd    "signal=VDD, measure=current, samples=16,  limitmode=on,  limitLow=0.2, limitHigh=LEV:iddmax";
+    }
+  }
+}
+
+
+Timing slow {
+  WaveformTable ts1 {
+    Period 'per1';
+    Waveforms {
+      clk 	{ P  { '0ns' D; '1.3ns' U; } }
+      d1	{ 01 { '2ns' D/U; } }
+      VDD       {}
+    }
+  }
+}
+
+DCLevels hi_vdd {
+  VDD {
+    VForce 'vdds_hi';
+    IClamp 'iddmax';
+  }
+  d1 {
+    VIH 'vih_hi';
+    VIL 'vil_hl';
+  }
+  clk {
+    VIH 'vih_hi';
+    VIL 'custom_vdd_low';
+}
+
+}
+
+DCSets all_sets {
+  DCLevels hi_vdd;
+}
+
+
+Selector all_typ {
+  per1 Typ;
+  vdds_low Typ;
+  vdd_hi Typ;
+  vdds_hi Typ;
+  iddmax Typ;
+  vih_hi Typ;
+  vil_hi Typ;
+}
+
+PatternBurst B1 {
+  PatList {
+    P1;
+  }
+}
+
+
+PatternExec all_func {
+  Category all_cats;
+  Selector all_typ;
+  Timing slow;
+  DCLevels hi_vdd;
+  DCSets all_sets;
+  PatternBurst B1;
+}
+
+
+
+
+
+Pattern P1 {
+  W ts1;
+  V { d1 =1; clk=P;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  "<DC_EVENT_1>VF_vdd_3p3V":IddqTestPoint;
+  V { d1 =0;}
+  V { d1 =0; LP:=8789;}
+  Loop LP { V { Ann {* Settling time*}}}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  "<DC_EVENT_2>IM_idd":IddqTestPoint;
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  "<DC_EVENT_3>VF_vdd_low":IddqTestPoint;
+  V { d1 =1; clk=P;}
+  V { d1 =1;}
+  Loop LP { V { Ann {* Settling time*}}}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  "<DC_EVENT_4>IM_idd":IddqTestPoint;
+  V { d1 =1; clk=P;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+
+  "<DC_EVENT_5>VF_vdd_hi":IddqTestPoint;
+  V { d1 =1; clk=P;}
+  Loop LP { V {Ann {* Settling time*}}}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+
+
+  "<DC_EVENT_6>IM_idd":IddqTestPoint;
+  V { d1 =1; clk=P;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+  V { d1 =1;}
+  V { d1 =1;}
+  V { d1 =0;}
+
+  
+}
+
