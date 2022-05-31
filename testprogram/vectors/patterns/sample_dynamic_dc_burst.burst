@@ -1,0 +1,5 @@
+hp93000,vector,0.1
+DMAS SQPG,SM,2,(@)
+SQLB "sample_dynamic_dc_burst",BRST,0,1,"ts1"
+SQPG 0,CALL,,"sample_dynamic_dc",,(@)
+SQPG 1,BEND,,,,(@)

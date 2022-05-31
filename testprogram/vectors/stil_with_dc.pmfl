@@ -1,0 +1,8 @@
+hp93000,pattern_master_file,0.1
+
+path:
+  ../vectors/patterns
+
+files:
+sample_dynamic_dc.binl
+sample_dynamic_dc_burst.burst

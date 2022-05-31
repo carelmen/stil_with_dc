@@ -1,0 +1,10 @@
+hp93000,config,0.1
+DFPN 10209,"15",(clk)
+DFPN 10210,"16",(d1)
+DFPS 22901,POS,(VDD)
+PSTE 1
+CONF I,F160,(clk,d1)
+
+DFGP I,(clk,d1),(all_inputs)
+RDIV 0,(@)
+
